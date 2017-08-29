@@ -12,25 +12,25 @@
 /* eslint-disable strict, no-extend-native, no-bitwise */
 
 /*
- * NOTE: We use (Number(x) || 0) to replace NaN values with zero.
- */
+                                                           * NOTE: We use (Number(x) || 0) to replace NaN values with zero.
+                                                           */
 
 if (!String.prototype.startsWith) {
-  String.prototype.startsWith = function(search) {
+  String.prototype.startsWith = function (search) {
     'use strict';
     if (this == null) {
       throw TypeError();
     }
     var string = String(this);
     var pos = arguments.length > 1 ?
-      (Number(arguments[1]) || 0) : 0;
+    Number(arguments[1]) || 0 : 0;
     var start = Math.min(Math.max(pos, 0), string.length);
     return string.indexOf(String(search), pos) === start;
   };
 }
 
 if (!String.prototype.endsWith) {
-  String.prototype.endsWith = function(search) {
+  String.prototype.endsWith = function (search) {
     'use strict';
     if (this == null) {
       throw TypeError();
@@ -39,7 +39,7 @@ if (!String.prototype.endsWith) {
     var stringLength = string.length;
     var searchString = String(search);
     var pos = arguments.length > 1 ?
-      (Number(arguments[1]) || 0) : stringLength;
+    Number(arguments[1]) || 0 : stringLength;
     var end = Math.min(Math.max(pos, 0), stringLength);
     var start = end - searchString.length;
     if (start < 0) {
@@ -50,7 +50,7 @@ if (!String.prototype.endsWith) {
 }
 
 if (!String.prototype.repeat) {
-  String.prototype.repeat = function(count) {
+  String.prototype.repeat = function (count) {
     'use strict';
     if (this == null) {
       throw TypeError();
@@ -68,7 +68,7 @@ if (!String.prototype.repeat) {
       if (count & 1) {
         result += string;
       }
-      if ((count >>= 1)) {
+      if (count >>= 1) {
         string += string;
       }
     }
@@ -77,7 +77,7 @@ if (!String.prototype.repeat) {
 }
 
 if (!String.prototype.includes) {
-  String.prototype.includes = function(search, start) {
+  String.prototype.includes = function (search, start) {
     'use strict';
     if (typeof start !== 'number') {
       start = 0;

@@ -14,22 +14,22 @@
 let _inGuard = 0;
 
 /**
- * This is the error handler that is called when we encounter an exception
- * when loading a module. This will report any errors encountered before
- * ExceptionsManager is configured.
- */
+                   * This is the error handler that is called when we encounter an exception
+                   * when loading a module. This will report any errors encountered before
+                   * ExceptionsManager is configured.
+                   */
 let _globalHandler = function onError(e) {
   throw e;
 };
 
 /**
- * The particular require runtime that we are using looks for a global
- * `ErrorUtils` object and if it exists, then it requires modules with the
- * error handler specified via ErrorUtils.setGlobalHandler by calling the
- * require function with applyWithGuard. Since the require module is loaded
- * before any of the modules, this ErrorUtils must be defined (and the handler
- * set) globally before requiring anything.
- */
+    * The particular require runtime that we are using looks for a global
+    * `ErrorUtils` object and if it exists, then it requires modules with the
+    * error handler specified via ErrorUtils.setGlobalHandler by calling the
+    * require function with applyWithGuard. Since the require module is loaded
+    * before any of the modules, this ErrorUtils must be defined (and the handler
+    * set) globally before requiring anything.
+    */
 const ErrorUtils = {
   setGlobalHandler(fun) {
     _globalHandler = fun;
@@ -74,17 +74,17 @@ const ErrorUtils = {
     function guarded() {
       return (
         ErrorUtils.applyWithGuard(
-          fun,
-          context || this,
-          arguments,
-          null,
-          name
-        )
-      );
+        fun,
+        context || this,
+        arguments,
+        null,
+        name));
+
+
     }
 
     return guarded;
-  },
-};
+  } };
+
 
 global.ErrorUtils = ErrorUtils;

@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 
-'use strict';
+'use strict';var _extends = Object.assign || function (target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i];for (var key in source) {if (Object.prototype.hasOwnProperty.call(source, key)) {target[key] = source[key];}}}return target;};
 
 const Server = require('../../Server');
 
@@ -17,56 +17,56 @@ const meta = require('./meta');
 const relativizeSourceMap = require('../../lib/relativizeSourceMap');
 const writeFile = require('./writeFile');
 
-import type Bundle from '../../Bundler/Bundle';
-import type {SourceMap} from '../../lib/SourceMap';
-import type {OutputOptions, RequestOptions} from '../types.flow';
 
-function buildBundle(packagerClient: Server, requestOptions: RequestOptions) {
-  return packagerClient.buildBundle({
-    ...Server.DEFAULT_BUNDLE_OPTIONS,
-    ...requestOptions,
-    isolateModuleIDs: true,
-  });
+
+
+
+function buildBundle(packagerClient, requestOptions) {
+  return packagerClient.buildBundle(_extends({},
+  Server.DEFAULT_BUNDLE_OPTIONS,
+  requestOptions, {
+    isolateModuleIDs: true }));
+
 }
 
-function createCodeWithMap(bundle: Bundle, dev: boolean, sourceMapSourcesRoot?: string): * {
-  const map = bundle.getSourceMap({dev});
+function createCodeWithMap(bundle, dev, sourceMapSourcesRoot) {
+  const map = bundle.getSourceMap({ dev });
   const sourceMap = relativizeSourceMap(
-    typeof map === 'string' ? (JSON.parse(map): SourceMap) : map,
-    sourceMapSourcesRoot);
+  typeof map === 'string' ? JSON.parse(map) : map,
+  sourceMapSourcesRoot);
   return {
-    code: bundle.getSource({dev}),
-    map: JSON.stringify(sourceMap),
-  };
+    code: bundle.getSource({ dev }),
+    map: JSON.stringify(sourceMap) };
+
 }
 
 function saveBundleAndMap(
-  bundle: Bundle,
-  options: OutputOptions,
-  log: (...args: Array<string>) => {},
-): Promise<> {
-  const {
-    bundleOutput,
-    bundleEncoding: encoding,
-    dev,
-    sourcemapOutput,
-    sourcemapSourcesRoot,
-  } = options;
+bundle,
+options,
+log)
+{const
+
+  bundleOutput =
+
+
+
+
+  options.bundleOutput,encoding = options.bundleEncoding,dev = options.dev,sourcemapOutput = options.sourcemapOutput,sourcemapSourcesRoot = options.sourcemapSourcesRoot;
 
   log('start');
   const codeWithMap = createCodeWithMap(bundle, !!dev, sourcemapSourcesRoot);
   log('finish');
 
-  log('Writing bundle output to:', bundleOutput);
+  log('Writing bundle output to:', bundleOutput);const
 
-  const {code} = codeWithMap;
+  code = codeWithMap.code;
   const writeBundle = writeFile(bundleOutput, code, encoding);
   const writeMetadata = writeFile(
-    bundleOutput + '.meta',
-    meta(code, encoding),
-    'binary');
-  Promise.all([writeBundle, writeMetadata])
-    .then(() => log('Done writing bundle output'));
+  bundleOutput + '.meta',
+  meta(code, encoding),
+  'binary');
+  Promise.all([writeBundle, writeMetadata]).
+  then(() => log('Done writing bundle output'));
 
   if (sourcemapOutput) {
     log('Writing sourcemap output to:', sourcemapOutput);

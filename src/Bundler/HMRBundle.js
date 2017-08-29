@@ -6,33 +6,33 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  * @format
  */
 
-'use strict';
+'use strict';var _extends = Object.assign || function (target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i];for (var key in source) {if (Object.prototype.hasOwnProperty.call(source, key)) {target[key] = source[key];}}}return target;};
 
 const BundleBase = require('./BundleBase');
 const ModuleTransport = require('../lib/ModuleTransport');
 
-import type Resolver from '../Resolver';
-import type ResolutionResponse
-  from '../node-haste/DependencyGraph/ResolutionResponse';
-import type Module from '../node-haste/Module';
+
+
+
+
 
 class HMRBundle extends BundleBase {
-  _sourceMappingURLFn: (hmrpath: string) => mixed;
-  _sourceMappingURLs: Array<mixed>;
-  _sourceURLFn: (hmrpath: string) => mixed;
-  _sourceURLs: Array<mixed>;
 
-  constructor({
-    sourceURLFn,
-    sourceMappingURLFn,
-  }: {
-    sourceURLFn: (hmrpath: string) => mixed,
-    sourceMappingURLFn: (hmrpath: string) => mixed,
-  }) {
+
+
+
+
+  constructor(_ref)
+
+
+
+
+
+  {let sourceURLFn = _ref.sourceURLFn,sourceMappingURLFn = _ref.sourceMappingURLFn;
     super();
     this._sourceURLFn = sourceURLFn;
     this._sourceMappingURLFn = sourceMappingURLFn;
@@ -41,38 +41,38 @@ class HMRBundle extends BundleBase {
   }
 
   addModule(
-    /* $FlowFixMe: broken OOP design: function signature should be the same */
-    resolver: Resolver,
-    /* $FlowFixMe: broken OOP design: function signature should be the same */
-    response: ResolutionResponse<Module, {}>,
-    /* $FlowFixMe: broken OOP design: function signature should be the same */
-    module: Module,
-    /* $FlowFixMe: broken OOP design: function signature should be the same */
-    moduleTransport: ModuleTransport,
-  ) {
+  /* $FlowFixMe: broken OOP design: function signature should be the same */
+  resolver,
+  /* $FlowFixMe: broken OOP design: function signature should be the same */
+  response,
+  /* $FlowFixMe: broken OOP design: function signature should be the same */
+  module,
+  /* $FlowFixMe: broken OOP design: function signature should be the same */
+  moduleTransport)
+  {
     const code = resolver.resolveRequires(
-      response,
-      module,
-      moduleTransport.code,
-      /* $FlowFixMe: may not exist */
-      moduleTransport.meta.dependencyOffsets,
-    );
+    response,
+    module,
+    moduleTransport.code,
+    /* $FlowFixMe: may not exist */
+    moduleTransport.meta.dependencyOffsets);
 
-    super.addModule(new ModuleTransport({...moduleTransport, code}));
+
+    super.addModule(new ModuleTransport(_extends({}, moduleTransport, { code })));
     this._sourceMappingURLs.push(
-      this._sourceMappingURLFn(moduleTransport.sourcePath),
-    );
+    this._sourceMappingURLFn(moduleTransport.sourcePath));
+
     this._sourceURLs.push(this._sourceURLFn(moduleTransport.sourcePath));
     // inconsistent with parent class return type
-    return (Promise.resolve(): any);
+    return Promise.resolve();
   }
 
-  getModulesIdsAndCode(): Array<{id: string, code: string}> {
+  getModulesIdsAndCode() {
     return this.__modules.map(module => {
       return {
         id: JSON.stringify(module.id),
-        code: module.code,
-      };
+        code: module.code };
+
     });
   }
 
@@ -82,7 +82,7 @@ class HMRBundle extends BundleBase {
 
   getSourceMappingURLs() {
     return this._sourceMappingURLs;
-  }
-}
+  }}
+
 
 module.exports = HMRBundle;

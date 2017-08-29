@@ -6,19 +6,19 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
-const nullthrows = require('fbjs/lib/nullthrows');
+const nullthrows = require('fbjs/lib/nullthrows');var _require =
 
-const {traverse, types} = require('babel-core');
+require('babel-core');const traverse = _require.traverse,types = _require.types;
 
-type AST = Object;
+
 
 class Replacement {
-  nameToIndex: Map<string, number>;
-  nextIndex: number;
+
+
 
   constructor() {
     this.nameToIndex = new Map();
@@ -28,14 +28,14 @@ class Replacement {
   isRequireCall(callee, firstArg) {
     return (
       callee.type === 'Identifier' && callee.name === 'require' &&
-      firstArg && isLiteralString(firstArg)
-    );
+      firstArg && isLiteralString(firstArg));
+
   }
 
   getIndex(stringLiteralOrTemplateLiteral) {
-    const name = stringLiteralOrTemplateLiteral.quasis
-      ? stringLiteralOrTemplateLiteral.quasis[0].value.cooked
-      : stringLiteralOrTemplateLiteral.value;
+    const name = stringLiteralOrTemplateLiteral.quasis ?
+    stringLiteralOrTemplateLiteral.quasis[0].value.cooked :
+    stringLiteralOrTemplateLiteral.value;
     let index = this.nameToIndex.get(name);
     if (index !== undefined) {
       return index;
@@ -52,12 +52,12 @@ class Replacement {
   makeArgs(newId, oldId, dependencyMapIdentifier) {
     const mapLookup = createMapLookup(dependencyMapIdentifier, newId);
     return [mapLookup, oldId];
-  }
-}
+  }}
+
 
 class ProdReplacement {
-  replacement: Replacement;
-  names: Array<string>;
+
+
 
   constructor(names) {
     this.replacement = new Replacement();
@@ -71,20 +71,20 @@ class ProdReplacement {
       firstArg &&
       firstArg.type === 'MemberExpression' &&
       firstArg.property &&
-      firstArg.property.type === 'NumericLiteral'
-    );
+      firstArg.property.type === 'NumericLiteral');
+
   }
 
   getIndex(memberExpression) {
     const id = memberExpression.property.value;
     if (id in this.names) {
-      return this.replacement.getIndex({value: this.names[id]});
+      return this.replacement.getIndex({ value: this.names[id] });
     }
 
     throw new Error(
-      `${id} is not a known module ID. Existing mappings: ${
-       this.names.map((n, i) => `${i} => ${n}`).join(', ')}`
-    );
+    `${id} is not a known module ID. Existing mappings: ${
+    this.names.map((n, i) => `${i} => ${n}`).join(', ')}`);
+
   }
 
   getNames() {
@@ -94,24 +94,24 @@ class ProdReplacement {
   makeArgs(newId, _, dependencyMapIdentifier) {
     const mapLookup = createMapLookup(dependencyMapIdentifier, newId);
     return [mapLookup];
-  }
-}
+  }}
+
 
 function createMapLookup(dependencyMapIdentifier, propertyIdentifier) {
   return types.memberExpression(
-    dependencyMapIdentifier,
-    propertyIdentifier,
-    true,
-  );
+  dependencyMapIdentifier,
+  propertyIdentifier,
+  true);
+
 }
 
 function collectDependencies(ast, replacement, dependencyMapIdentifier) {
-  const traversalState = {dependencyMapIdentifier};
+  const traversalState = { dependencyMapIdentifier };
   traverse(ast, {
     Program(path, state) {
       if (!state.dependencyMapIdentifier) {
         state.dependencyMapIdentifier =
-          path.scope.generateUidIdentifier('dependencyMap');
+        path.scope.generateUidIdentifier('dependencyMap');
       }
     },
     CallExpression(path, state) {
@@ -120,31 +120,30 @@ function collectDependencies(ast, replacement, dependencyMapIdentifier) {
       if (replacement.isRequireCall(node.callee, arg)) {
         const index = replacement.getIndex(arg);
         node.arguments = replacement.makeArgs(
-          types.numericLiteral(index),
-          arg,
-          state.dependencyMapIdentifier,
-        );
+        types.numericLiteral(index),
+        arg,
+        state.dependencyMapIdentifier);
+
       }
-    },
-  }, null, traversalState);
+    } },
+  null, traversalState);
 
   return {
     dependencies: replacement.getNames(),
-    dependencyMapName: nullthrows(traversalState.dependencyMapIdentifier).name,
-  };
+    dependencyMapName: nullthrows(traversalState.dependencyMapIdentifier).name };
+
 }
 
 function isLiteralString(node) {
   return node.type === 'StringLiteral' ||
-         node.type === 'TemplateLiteral' && node.quasis.length === 1;
+  node.type === 'TemplateLiteral' && node.quasis.length === 1;
 }
 
 exports = module.exports =
-  (ast: AST) => collectDependencies(ast, new Replacement());
+ast => collectDependencies(ast, new Replacement());
 exports.forOptimization =
-  (ast: AST, names: Array<string>, dependencyMapName?: string) =>
-    collectDependencies(
-      ast,
-      new ProdReplacement(names),
-      dependencyMapName ? types.identifier(dependencyMapName) : undefined,
-    );
+(ast, names, dependencyMapName) =>
+collectDependencies(
+ast,
+new ProdReplacement(names),
+dependencyMapName ? types.identifier(dependencyMapName) : undefined);

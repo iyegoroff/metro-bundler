@@ -15,16 +15,16 @@
 // and non objects. It's not spec-compliant. It's a perf optimization.
 // This is only needed for iOS 8 and current Android JSC.
 
-Object.assign = function(target, sources) {
+Object.assign = function (target, sources) {
   if (__DEV__) {
     if (target == null) {
       throw new TypeError('Object.assign target cannot be null or undefined');
     }
     if (typeof target !== 'object' && typeof target !== 'function') {
       throw new TypeError(
-        'In this environment the target of assign MUST be an object.' +
-        'This error is a performance optimization and not spec compliant.'
-      );
+      'In this environment the target of assign MUST be an object.' +
+      'This error is a performance optimization and not spec compliant.');
+
     }
   }
 
@@ -36,11 +36,11 @@ Object.assign = function(target, sources) {
 
     if (__DEV__) {
       if (typeof nextSource !== 'object' &&
-          typeof nextSource !== 'function') {
+      typeof nextSource !== 'function') {
         throw new TypeError(
-          'In this environment the sources for assign MUST be an object.' +
-          'This error is a performance optimization and not spec compliant.'
-        );
+        'In this environment the sources for assign MUST be an object.' +
+        'This error is a performance optimization and not spec compliant.');
+
       }
     }
 
@@ -53,11 +53,11 @@ Object.assign = function(target, sources) {
         var hasOwnProperty = Object.prototype.hasOwnProperty;
         if (!hasOwnProperty.call(nextSource, key)) {
           throw new TypeError(
-            'One of the sources for assign has an enumerable key on the ' +
-            'prototype chain. Are you trying to assign a prototype property? ' +
-            'We don\'t allow it, as this is an edge case that we do not support. ' +
-            'This error is a performance optimization and not spec compliant.'
-          );
+          'One of the sources for assign has an enumerable key on the ' +
+          'prototype chain. Are you trying to assign a prototype property? ' +
+          'We don\'t allow it, as this is an edge case that we do not support. ' +
+          'This error is a performance optimization and not spec compliant.');
+
         }
       }
       target[key] = nextSource[key];

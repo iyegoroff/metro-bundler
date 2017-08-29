@@ -6,39 +6,39 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
 const fs = require('fs');
-const mkdirp = require('mkdirp');
+const mkdirp = require('mkdirp');var _require =
 
-const {dirname} = require('path');
+require('path');const dirname = _require.dirname;
 
-import type {Callback} from '../types.flow';
 
-type Path = string;
-type WorkerFn<Options> = (
-  fileContents: Buffer,
-  options: Options,
-  callback: Callback<Object>,
-) => void;
-export type WorkerFnWithIO<Options> = (
-  infile: Path,
-  outfile: Path,
-  options: Options,
-  callback: Callback<>,
-) => void;
 
-function wrapWorkerFn<Options>(
-  workerFunction: WorkerFn<Options>,
-): WorkerFnWithIO<Options> {
+
+
+
+
+
+
+
+
+
+
+
+
+
+function wrapWorkerFn(
+workerFunction)
+{
   return (
-    infile: Path,
-    outfile: Path,
-    options: Options,
-    callback: Callback<>,
-  ) => {
+  infile,
+  outfile,
+  options,
+  callback) =>
+  {
     const contents = fs.readFileSync(infile);
     workerFunction(contents, options, (error, result) => {
       if (error) {

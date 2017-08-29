@@ -6,46 +6,46 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 
 'use strict';
 
-import type {RawMapping} from '../Bundler/source-map';
-import type Module from '../node-haste/Module';
-import type {SourceMap} from './SourceMap';
 
-export type SourceMapOrMappings = SourceMap | Array<RawMapping>;
 
-type Metadata = {
-  dependencies?: ?Array<string>,
-  dependencyPairs?: Array<[string, Module]>,
-  preloaded: ?boolean,
-};
+
+
+
+
+
+
+
+
+
 
 class ModuleTransport {
 
-  name: string;
-  id: number;
-  code: string;
-  sourceCode: string;
-  sourcePath: string;
-  virtual: boolean;
-  meta: ?Metadata;
-  polyfill: boolean;
-  map: ?SourceMapOrMappings;
 
-  constructor(data: {
-    name: string,
-    id: number,
-    code: string,
-    sourceCode: string,
-    sourcePath: string,
-    virtual?: boolean,
-    meta?: ?Metadata,
-    polyfill?: boolean,
-    map?: ?SourceMapOrMappings,
-  }) {
+
+
+
+
+
+
+
+
+
+  constructor(data)
+
+
+
+
+
+
+
+
+
+  {
     this.name = data.name;
 
     assertExists(data, 'id');
@@ -66,9 +66,9 @@ class ModuleTransport {
     this.map = data.map;
 
     Object.freeze(this);
-  }
+  }}
 
-}
+
 
 module.exports = ModuleTransport;
 

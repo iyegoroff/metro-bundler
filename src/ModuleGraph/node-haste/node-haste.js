@@ -6,20 +6,20 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 
 'use strict';
 
-import type { // eslint-disable-line sort-requires
-  Extensions,
-  Path,
-} from './node-haste.flow';
 
-import type {
-  ResolveFn,
-  TransformedCodeFile,
-} from '../types.flow';
+
+
+
+
+
+
+
+
 
 const AssetResolutionCache = require('../../node-haste/AssetResolutionCache');
 const DependencyGraphHelpers = require('../../node-haste/DependencyGraph/DependencyGraphHelpers');
@@ -30,58 +30,58 @@ const Module = require('./Module');
 const ModuleCache = require('./ModuleCache');
 const ResolutionRequest = require('../../node-haste/DependencyGraph/ResolutionRequest');
 
-const defaults = require('../../defaults');
+const defaults = require('../../defaults');var _require =
 
-const {ModuleResolver} = require('../../node-haste/DependencyGraph/ModuleResolution');
+require('../../node-haste/DependencyGraph/ModuleResolution');const ModuleResolver = _require.ModuleResolver;
 
-import type {Moduleish, Packageish} from '../../node-haste/DependencyGraph/ResolutionRequest';
 
-type ResolveOptions = {|
-  assetExts: Extensions,
-  extraNodeModules: {[id: string]: string},
-  +sourceExts: Extensions,
-  transformedFiles: {[path: Path]: TransformedCodeFile},
-|};
+
+
+
+
+
+
+
 
 const platforms = new Set(defaults.platforms);
 
 /**
- * We don't need to crawl the filesystem all over again so we just mock
- * a jest-haste-map's ModuleMap instance. Eventually, though, we'll
- * want to figure out how to reunify and get rid of `HasteMap`.
- */
-function getFakeModuleMap(hasteMap: HasteMap<Module, Packageish>) {
+                                                * We don't need to crawl the filesystem all over again so we just mock
+                                                * a jest-haste-map's ModuleMap instance. Eventually, though, we'll
+                                                * want to figure out how to reunify and get rid of `HasteMap`.
+                                                */
+function getFakeModuleMap(hasteMap) {
   return {
-    getModule(name: string, platform: ?string): ?string {
+    getModule(name, platform) {
       const module = hasteMap.getModule(name, platform);
       return module && module.type === 'Module' ? module.path : null;
     },
-    getPackage(name: string, platform: ?string): ?string {
+    getPackage(name, platform) {
       const pkg = hasteMap.getPackage(name);
       return pkg && pkg.path;
-    },
-  };
+    } };
+
 }
 
-const nullModule: Moduleish = {
+const nullModule = {
   path: '/',
   getPackage() {},
   hash() {
     throw new Error('not implemented');
   },
-  readCached() { throw new Error('not implemented'); },
-  readFresh() { return Promise.reject(new Error('not implemented')); },
-  isHaste() { throw new Error('not implemented'); },
-  getName() { throw new Error('not implemented'); },
-};
+  readCached() {throw new Error('not implemented');},
+  readFresh() {return Promise.reject(new Error('not implemented'));},
+  isHaste() {throw new Error('not implemented');},
+  getName() {throw new Error('not implemented');} };
 
-exports.createResolveFn = function(options: ResolveOptions): ResolveFn {
-  const {
-    assetExts,
-    extraNodeModules,
-    transformedFiles,
-    sourceExts,
-  } = options;
+
+exports.createResolveFn = function (options) {const
+
+  assetExts =
+
+
+
+  options.assetExts,extraNodeModules = options.extraNodeModules,transformedFiles = options.transformedFiles,sourceExts = options.sourceExts;
   const files = Object.keys(transformedFiles);
   function getTransformedFile(path) {
     const result = transformedFiles[path];
@@ -93,22 +93,22 @@ exports.createResolveFn = function(options: ResolveOptions): ResolveFn {
 
   const helpers = new DependencyGraphHelpers({
     assetExts,
-    providesModuleNodeModules: defaults.providesModuleNodeModules,
-  });
+    providesModuleNodeModules: defaults.providesModuleNodeModules });
+
 
   const hasteFS = new HasteFS(files);
   const moduleCache = new ModuleCache(
-    filePath => hasteFS.closest(filePath, 'package.json'),
-    getTransformedFile,
-  );
+  filePath => hasteFS.closest(filePath, 'package.json'),
+  getTransformedFile);
+
   const hasteMap = new HasteMap({
     extensions: sourceExts,
     files,
     helpers,
     moduleCache,
     platforms,
-    preferNativePlatform: true,
-  });
+    preferNativePlatform: true });
+
 
   const hasteMapBuilt = hasteMap.build();
   const resolutionRequests = {};
@@ -116,8 +116,8 @@ exports.createResolveFn = function(options: ResolveOptions): ResolveFn {
   const assetResolutionCache = new AssetResolutionCache({
     assetExtensions: new Set(assetExts),
     getDirFiles: dirPath => filesByDirNameIndex.getAllFiles(dirPath),
-    platforms,
-  });
+    platforms });
+
   const moduleResolver = new ModuleResolver({
     dirExists: filePath => hasteFS.dirExists(filePath),
     doesFileExist: filePath => hasteFS.exists(filePath),
@@ -127,9 +127,9 @@ exports.createResolveFn = function(options: ResolveOptions): ResolveFn {
     moduleMap: getFakeModuleMap(hasteMap),
     preferNativePlatform: true,
     resolveAsset: (dirPath, assetName, platform) =>
-      assetResolutionCache.resolve(dirPath, assetName, platform),
-    sourceExts,
-  });
+    assetResolutionCache.resolve(dirPath, assetName, platform),
+    sourceExts });
+
 
   return (id, source, platform, _, callback) => {
     let resolutionRequest = resolutionRequests[platform];
@@ -139,19 +139,19 @@ exports.createResolveFn = function(options: ResolveOptions): ResolveFn {
         entryPath: '',
         helpers,
         platform,
-        moduleCache,
-      });
+        moduleCache });
+
     }
 
-    const from = source != null
-      ? new Module(source, moduleCache, getTransformedFile(source))
-      : nullModule;
-    hasteMapBuilt
-      .then(() => resolutionRequest.resolveDependency(from, id))
-      .then(
-        // nextTick to escape promise error handling
-        module => process.nextTick(callback, null, module.path),
-        error => process.nextTick(callback, error),
-      );
+    const from = source != null ?
+    new Module(source, moduleCache, getTransformedFile(source)) :
+    nullModule;
+    hasteMapBuilt.
+    then(() => resolutionRequest.resolveDependency(from, id)).
+    then(
+    // nextTick to escape promise error handling
+    module => process.nextTick(callback, null, module.path),
+    error => process.nextTick(callback, error));
+
   };
 };

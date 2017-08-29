@@ -13,12 +13,12 @@ var path = require('path');
 // Don't forget to everything listed here to `package.json`
 // modulePathIgnorePatterns.
 var sharedBlacklist = [
-  /node_modules[/\\]react[/\\]dist[/\\].*/,
+/node_modules[/\\]react[/\\]dist[/\\].*/,
 
-  /website\/node_modules\/.*/,
+/website\/node_modules\/.*/,
 
-  /heapCapture\/bundle\.js/,
-];
+/heapCapture\/bundle\.js/];
+
 
 function escapeRegExp(pattern) {
   if (Object.prototype.toString.call(pattern) === '[object RegExp]') {
@@ -34,11 +34,11 @@ function escapeRegExp(pattern) {
 
 function blacklist(additionalBlacklist) {
   return new RegExp('(' +
-    (additionalBlacklist || []).concat(sharedBlacklist)
-      .map(escapeRegExp)
-      .join('|') +
-    ')$'
-  );
+  (additionalBlacklist || []).concat(sharedBlacklist).
+  map(escapeRegExp).
+  join('|') +
+  ')$');
+
 }
 
 module.exports = blacklist;

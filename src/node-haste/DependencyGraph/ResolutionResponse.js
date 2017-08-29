@@ -1,34 +1,34 @@
- /**
- * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @flow
- */
+/**
+* Copyright (c) 2015-present, Facebook, Inc.
+* All rights reserved.
+*
+* This source code is licensed under the BSD-style license found in the
+* LICENSE file in the root directory of this source tree. An additional grant
+* of patent rights can be found in the PATENTS file in the same directory.
+*
+* 
+*/
 
 'use strict';
 
 const NO_OPTIONS = {};
 
-class ResolutionResponse<TModule: {hash(): string}, TOptions> {
+class ResolutionResponse {
 
-  dependencies: Array<TModule>;
-  mainModuleId: ?(number | string);
-  mocks: mixed;
-  numPrependedDependencies: number;
-  options: TOptions;
+
+
+
+
+
 
   // This is monkey-patched from Resolver.
-  getModuleId: ?() => number;
 
-  _mappings: {[hash: string]: Array<[string, TModule]>};
-  _finalized: boolean;
-  _mainModule: ?TModule;
 
-  constructor(options: TOptions) {
+
+
+
+
+  constructor(options) {
     this.dependencies = [];
     this.mainModuleId = null;
     this.mocks = null;
@@ -38,31 +38,31 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     this._finalized = false;
   }
 
-  copy(properties: {
-    dependencies?: Array<TModule>,
-    mainModuleId?: number,
-    mocks?: mixed,
-  }): ResolutionResponse<TModule, TOptions> {
-    const {
-      dependencies = this.dependencies,
-      mainModuleId = this.mainModuleId,
-      mocks = this.mocks,
-    } = properties;
+  copy(properties)
 
-    const numPrependedDependencies = dependencies === this.dependencies
-      ? this.numPrependedDependencies : 0;
+
+
+  {var _properties$dependenc =
+
+
+
+
+    properties.dependencies;const dependencies = _properties$dependenc === undefined ? this.dependencies : _properties$dependenc;var _properties$mainModul = properties.mainModuleId;const mainModuleId = _properties$mainModul === undefined ? this.mainModuleId : _properties$mainModul;var _properties$mocks = properties.mocks;const mocks = _properties$mocks === undefined ? this.mocks : _properties$mocks;
+
+    const numPrependedDependencies = dependencies === this.dependencies ?
+    this.numPrependedDependencies : 0;
 
     /* $FlowFixMe: Flow doesn't like Object.assign on class-made objects. */
     return Object.assign(
-      new this.constructor(this.options),
-      this,
-      {
-        dependencies,
-        mainModuleId,
-        mocks,
-        numPrependedDependencies,
-      },
-    );
+    new this.constructor(this.options),
+    this,
+    {
+      dependencies,
+      mainModuleId,
+      mocks,
+      numPrependedDependencies });
+
+
   }
 
   _assertNotFinalized() {
@@ -77,7 +77,7 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     }
   }
 
-  finalize(): Promise<this> {
+  finalize() {
     /* $FlowFixMe: _mainModule is not initialized in the constructor. */
     return this._mainModule.getName().then(id => {
       this.mainModuleId = id;
@@ -86,7 +86,7 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     });
   }
 
-  pushDependency(module: TModule) {
+  pushDependency(module) {
     this._assertNotFinalized();
     if (this.dependencies.length === 0) {
       this._mainModule = module;
@@ -95,17 +95,17 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     this.dependencies.push(module);
   }
 
-  prependDependency(module: TModule) {
+  prependDependency(module) {
     this._assertNotFinalized();
     this.dependencies.unshift(module);
     this.numPrependedDependencies += 1;
   }
 
   setResolvedDependencyPairs(
-    module: TModule,
-    pairs: Array<[string, TModule]>,
-    options: {ignoreFinalized?: boolean} = NO_OPTIONS,
-  ) {
+  module,
+  pairs)
+
+  {let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : NO_OPTIONS;
     if (!options.ignoreFinalized) {
       this._assertNotFinalized();
     }
@@ -115,14 +115,14 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     }
   }
 
-  setMocks(mocks: mixed) {
+  setMocks(mocks) {
     this.mocks = mocks;
   }
 
-  getResolvedDependencyPairs(module: TModule): $ReadOnlyArray<[string, TModule]> {
+  getResolvedDependencyPairs(module) {
     this._assertFinalized();
     return this._mappings[module.hash()];
-  }
-}
+  }}
+
 
 module.exports = ResolutionResponse;

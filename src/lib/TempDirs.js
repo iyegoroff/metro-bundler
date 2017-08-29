@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  * @format
  */
 
@@ -18,14 +18,14 @@ const fs = require('fs');
 class CannotCreateTempDirError extends Error {
   constructor() {
     super("couldn't create a temporary directory");
-  }
-}
+  }}
+
 
 /**
- * Claim a temporary directory that doesn't exist already and that cannot be
- * predicted, so that nobody can race us to it. This is similar to `mkdtemp(3)`.
- */
-function create(pathPrefix: string, mode: number): string {
+      * Claim a temporary directory that doesn't exist already and that cannot be
+      * predicted, so that nobody can race us to it. This is similar to `mkdtemp(3)`.
+      */
+function create(pathPrefix, mode) {
   let resultPath;
   let i = 0;
   do {
@@ -38,7 +38,7 @@ function create(pathPrefix: string, mode: number): string {
   return resultPath;
 }
 
-function tryMkdirSync(dirPath: string, mode?: number): boolean {
+function tryMkdirSync(dirPath, mode) {
   try {
     fs.mkdirSync(dirPath, mode);
     return true;
@@ -50,4 +50,4 @@ function tryMkdirSync(dirPath: string, mode?: number): boolean {
   }
 }
 
-module.exports = {CannotCreateTempDirError, create, tryMkdirSync};
+module.exports = { CannotCreateTempDirError, create, tryMkdirSync };

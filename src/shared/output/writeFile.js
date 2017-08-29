@@ -6,15 +6,15 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
 const denodeify = require('denodeify');
 const fs = require('fs');
 
-type WriteFn =
-  (file: string, data: string | Buffer, encoding?: ?string) => Promise<mixed>;
-const writeFile: WriteFn = denodeify(fs.writeFile);
+
+
+const writeFile = denodeify(fs.writeFile);
 
 module.exports = writeFile;

@@ -15,8 +15,8 @@
 function findIndex(predicate, context) {
   if (this == null) {
     throw new TypeError(
-      'Array.prototype.findIndex called on null or undefined'
-    );
+    'Array.prototype.findIndex called on null or undefined');
+
   }
   if (typeof predicate !== 'function') {
     throw new TypeError('predicate must be a function');
@@ -36,8 +36,8 @@ if (!Array.prototype.findIndex) {
     enumerable: false,
     writable: true,
     configurable: true,
-    value: findIndex
-  });
+    value: findIndex });
+
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
@@ -46,16 +46,16 @@ if (!Array.prototype.find) {
     enumerable: false,
     writable: true,
     configurable: true,
-    value: function(predicate, context) {
+    value: function (predicate, context) {
       if (this == null) {
         throw new TypeError(
-          'Array.prototype.find called on null or undefined'
-        );
+        'Array.prototype.find called on null or undefined');
+
       }
       var index = findIndex.call(this, predicate, context);
       return index === -1 ? undefined : this[index];
-    }
-  });
+    } });
+
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
@@ -84,12 +84,12 @@ if (!Array.prototype.includes) {
       while (k < len) {
         currentElement = O[k];
         if (searchElement === currentElement ||
-          (searchElement !== searchElement && currentElement !== currentElement)) {
+        searchElement !== searchElement && currentElement !== currentElement) {
           return true;
         }
         k++;
       }
       return false;
-    }
-  });
+    } });
+
 }

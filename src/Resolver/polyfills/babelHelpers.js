@@ -19,56 +19,13 @@
 
 var babelHelpers = global.babelHelpers = {};
 
-babelHelpers.jsx = (function () {
-  var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7;
-  return function createRawReactElement(type, props, key, children) {
-    var defaultProps = type && type.defaultProps;
-    var childrenLength = arguments.length - 3;
-
-    if (!props && childrenLength !== 0) {
-      props = {};
-    }
-
-    if (props && defaultProps) {
-      for (var propName in defaultProps) {
-        if (props[propName] === void 0) {
-          props[propName] = defaultProps[propName];
-        }
-      }
-    } else if (!props) {
-      props = defaultProps || {};
-    }
-
-    if (childrenLength === 1) {
-      props.children = children;
-    } else if (childrenLength > 1) {
-      var childArray = Array(childrenLength);
-
-      for (var i = 0; i < childrenLength; i++) {
-        childArray[i] = arguments[i + 3];
-      }
-
-      props.children = childArray;
-    }
-
-    return {
-      $$typeof: REACT_ELEMENT_TYPE,
-      type: type,
-      key: key === undefined ? null : '' + key,
-      ref: null,
-      props: props,
-      _owner: null
-    };
-  };
-})();
-
 babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-babelHelpers.createRawReactElement = (function () {
+babelHelpers.createRawReactElement = function () {
   var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7;
   return function createRawReactElement(type, key, props) {
     return {
@@ -77,10 +34,10 @@ babelHelpers.createRawReactElement = (function () {
       key: key,
       ref: null,
       props: props,
-      _owner: null
-    };
+      _owner: null };
+
   };
-})();
+}();
 
 babelHelpers.classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -88,7 +45,7 @@ babelHelpers.classCallCheck = function (instance, Constructor) {
   }
 };
 
-babelHelpers.createClass = (function () {
+babelHelpers.createClass = function () {
   function defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
@@ -104,12 +61,12 @@ babelHelpers.createClass = (function () {
     if (staticProps) defineProperties(Constructor, staticProps);
     return Constructor;
   };
-})();
+}();
 
-babelHelpers.defineEnumerableProperties = function(obj, descs) {
+babelHelpers.defineEnumerableProperties = function (obj, descs) {
   for (var key in descs) {
     var desc = descs[key];
-    desc.configurable = (desc.enumerable = true);
+    desc.configurable = desc.enumerable = true;
     if ('value' in desc) desc.writable = true;
     Object.defineProperty(obj, key, desc);
   }
@@ -122,8 +79,8 @@ babelHelpers.defineProperty = function (obj, key, value) {
       value: value,
       enumerable: true,
       configurable: true,
-      writable: true
-    });
+      writable: true });
+
   } else {
     obj[key] = value;
   }
@@ -180,16 +137,16 @@ babelHelpers.inherits = function (subClass, superClass) {
       value: subClass,
       enumerable: false,
       writable: true,
-      configurable: true
-    }
-  });
+      configurable: true } });
+
+
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 };
 
 babelHelpers.interopRequireDefault = function (obj) {
   return obj && obj.__esModule ? obj : {
-    default: obj
-  };
+    default: obj };
+
 };
 
 babelHelpers.interopRequireWildcard = function (obj) {
@@ -229,7 +186,7 @@ babelHelpers.possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
-babelHelpers.slicedToArray = (function () {
+babelHelpers.slicedToArray = function () {
   function sliceIterator(arr, i) {
     var _arr = [];
     var _n = true;
@@ -265,14 +222,14 @@ babelHelpers.slicedToArray = (function () {
       throw new TypeError("Invalid attempt to destructure non-iterable instance");
     }
   };
-})();
+}();
 
 babelHelpers.taggedTemplateLiteral = function (strings, raw) {
   return Object.freeze(Object.defineProperties(strings, {
     raw: {
-      value: Object.freeze(raw)
-    }
-  }));
+      value: Object.freeze(raw) } }));
+
+
 };
 
 babelHelpers.toArray = function (arr) {

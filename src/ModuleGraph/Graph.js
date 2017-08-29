@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
@@ -18,47 +18,47 @@ const nullthrows = require('fbjs/lib/nullthrows');
 const queue = require('async/queue');
 const seq = require('async/seq');
 
-import type {
-  Callback,
-  File,
-  GraphFn,
-  LoadFn,
-  ResolveFn,
-} from './types.flow';
 
-type Async$Queue<T, C> = {
-  buffer: number,
-  concurrency: number,
-  drain: () => mixed,
-  empty: () => mixed,
-  error: (Error, T) => mixed,
-  idle(): boolean,
-  kill(): void,
-  length(): number,
-  pause(): void,
-  paused: boolean,
-  push(T | Array<T>, void | C): void,
-  resume(): void,
-  running(): number,
-  saturated: () => mixed,
-  started: boolean,
-  unsaturated: () => mixed,
-  unshift(T, void | C): void,
-  workersList(): Array<T>,
-};
 
-type LoadQueue =
-  Async$Queue<{id: string, parent: ?string}, Callback<File, Array<string>>>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const NO_OPTIONS = {};
 
-exports.create = function create(resolve: ResolveFn, load: LoadFn): GraphFn {
-  function Graph(entryPoints, platform, options, callback = emptyFunction) {
-    const {
-      log = (console: any),
-      optimize = false,
-      skip,
-    } = options || NO_OPTIONS;
+exports.create = function create(resolve, load) {
+  function Graph(entryPoints, platform, options) {let callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : emptyFunction;var _ref =
+
+
+
+
+    options || NO_OPTIONS,_ref$log = _ref.log;const log = _ref$log === undefined ? console : _ref$log;var _ref$optimize = _ref.optimize;const optimize = _ref$optimize === undefined ? false : _ref$optimize,skip = _ref.skip;
 
     if (typeof platform !== 'string') {
       log.error('`Graph`, called without a platform');
@@ -66,12 +66,12 @@ exports.create = function create(resolve: ResolveFn, load: LoadFn): GraphFn {
       return;
     }
 
-    const loadQueue: LoadQueue = queue(seq(
-      ({id, parent}, cb) => resolve(id, parent, platform, options || NO_OPTIONS, cb),
-      memoize((file, cb) => load(file, {log, optimize}, cb)),
-    ), Number.MAX_SAFE_INTEGER);
+    const loadQueue = queue(seq(
+    (_ref2, cb) => {let id = _ref2.id,parent = _ref2.parent;return resolve(id, parent, platform, options || NO_OPTIONS, cb);},
+    memoize((file, cb) => load(file, { log, optimize }, cb))),
+    Number.MAX_SAFE_INTEGER);var _createGraphHelpers =
 
-    const {collect, loadModule} = createGraphHelpers(loadQueue, skip);
+    createGraphHelpers(loadQueue, skip);const collect = _createGraphHelpers.collect,loadModule = _createGraphHelpers.loadModule;
 
     loadQueue.drain = () => {
       loadQueue.kill();
@@ -101,20 +101,20 @@ exports.create = function create(resolve: ResolveFn, load: LoadFn): GraphFn {
 function createGraphHelpers(loadQueue, skip) {
   const modules = new Map([[null, emptyModule()]]);
 
-  function collect(
-    path = null,
-    serialized = {entryModules: [], modules: []},
-    seen = new Set(),
-  ) {
+  function collect()
+
+
+
+  {let path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;let serialized = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { entryModules: [], modules: [] };let seen = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new Set();
     const module = modules.get(path);
     if (module == null || seen.has(path)) {
       return serialized;
-    }
+    }const
 
-    const {dependencies} = module;
+    dependencies = module.dependencies;
     if (path === null) {
       serialized.entryModules =
-        dependencies.map(dep => nullthrows(modules.get(dep.path)));
+      dependencies.map(dep => nullthrows(modules.get(dep.path)));
     } else {
       serialized.modules.push(module);
       seen.add(path);
@@ -129,36 +129,36 @@ function createGraphHelpers(loadQueue, skip) {
 
   function loadModule(id, parent, parentDepIndex) {
     loadQueue.push(
-      {id, parent},
-      (error, file, dependencyIDs) =>
-        onFileLoaded(error, file, dependencyIDs, id, parent, parentDepIndex),
-    );
+    { id, parent },
+    (error, file, dependencyIDs) =>
+    onFileLoaded(error, file, dependencyIDs, id, parent, parentDepIndex));
+
   }
 
   function onFileLoaded(
-    error,
-    file,
-    dependencyIDs,
-    id,
-    parent,
-    parentDependencyIndex,
-  ) {
+  error,
+  file,
+  dependencyIDs,
+  id,
+  parent,
+  parentDependencyIndex)
+  {
     if (error) {
       return;
-    }
+    }var _nullthrows =
 
-    const {path} = nullthrows(file);
+    nullthrows(file);const path = _nullthrows.path;
     dependencyIDs = nullthrows(dependencyIDs);
 
     const parentModule = modules.get(parent);
     invariant(parentModule, 'Invalid parent module: ' + String(parent));
-    parentModule.dependencies[parentDependencyIndex] = {id, path};
+    parentModule.dependencies[parentDependencyIndex] = { id, path };
 
     if ((!skip || !skip.has(path)) && !modules.has(path)) {
       const module = {
         dependencies: Array(dependencyIDs.length),
-        file: nullthrows(file),
-      };
+        file: nullthrows(file) };
+
       modules.set(path, module);
       for (let i = 0; i < dependencyIDs.length; ++i) {
         loadModule(dependencyIDs[i], path, i);
@@ -166,5 +166,5 @@ function createGraphHelpers(loadQueue, skip) {
     }
   }
 
-  return {collect, loadModule};
+  return { collect, loadModule };
 }

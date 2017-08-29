@@ -6,72 +6,72 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 
-'use strict';
+'use strict';var _extends = Object.assign || function (target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i];for (var key in source) {if (Object.prototype.hasOwnProperty.call(source, key)) {target[key] = source[key];}}}return target;};
 
 const Logger = require('./Logger');
 const TransformCaching = require('./lib/TransformCaching');
 
 const blacklist = require('./blacklist');
 const debug = require('debug');
-const invariant = require('fbjs/lib/invariant');
+const invariant = require('fbjs/lib/invariant');var _require =
 
-const {fromRawMappings, compactMapping} = require('./Bundler/source-map');
+require('./Bundler/source-map');const fromRawMappings = _require.fromRawMappings,compactMapping = _require.compactMapping;
 
-import type {PostProcessModules, PostMinifyProcess} from './Bundler';
-import type Server from './Server';
-import type {GlobalTransformCache} from './lib/GlobalTransformCache';
-import type {TransformCache} from './lib/TransformCaching';
-import type {Reporter} from './lib/reporting';
-import type {HasteImpl} from './node-haste/Module';
+
+
+
+
+
+
 
 exports.createBlacklist = blacklist;
-exports.sourceMaps = {fromRawMappings, compactMapping};
+exports.sourceMaps = { fromRawMappings, compactMapping };
 exports.createServer = createServer;
 exports.Logger = Logger;
 
-type Options = {
-  +sourceExts: ?Array<string>,
-  +transformCache: TransformCache,
-  +transformModulePath: string,
-  globalTransformCache: ?GlobalTransformCache,
-  hasteImpl?: HasteImpl,
-  +maxWorkers?: number,
-  nonPersistent?: boolean,
-  postMinifyProcess?: PostMinifyProcess,
-  postProcessModules?: PostProcessModules,
-  projectRoots: $ReadOnlyArray<string>,
-  reporter?: Reporter,
-  watch?: boolean,
-  workerPath: ?string,
-};
 
-type StrictOptions = {...Options, reporter: Reporter};
 
-type PublicBundleOptions = {
-  +dev?: boolean,
-  +entryFile: string,
-  +generateSourceMaps?: boolean,
-  +inlineSourceMap?: boolean,
-  +minify?: boolean,
-  +platform?: string,
-  +runModule?: boolean,
-  +sourceMapUrl?: string,
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exports.TransformCaching = TransformCaching;
 
 /**
- * This is a public API, so we don't trust the value and purposefully downgrade
- * it as `mixed`. Because it understands `invariant`, Flow ensure that we
- * refine these values completely.
- */
-function assertPublicBundleOptions(bo: mixed): PublicBundleOptions {
+                                              * This is a public API, so we don't trust the value and purposefully downgrade
+                                              * it as `mixed`. Because it understands `invariant`, Flow ensure that we
+                                              * refine these values completely.
+                                              */
+function assertPublicBundleOptions(bo) {
   invariant(typeof bo === 'object' && bo != null, 'bundle options must be an object');
-  invariant(bo.dev === undefined || typeof bo.dev === 'boolean', 'bundle options field `dev` must be a boolean');
-  const {entryFile} = bo;
+  invariant(bo.dev === undefined || typeof bo.dev === 'boolean', 'bundle options field `dev` must be a boolean');const
+  entryFile = bo.entryFile;
   invariant(typeof entryFile === 'string', 'bundle options must contain a string field `entryFile`');
   invariant(bo.generateSourceMaps === undefined || typeof bo.generateSourceMaps === 'boolean', 'bundle options field `generateSourceMaps` must be a boolean');
   invariant(bo.inlineSourceMap === undefined || typeof bo.inlineSourceMap === 'boolean', 'bundle options field `inlineSourceMap` must be a boolean');
@@ -79,34 +79,34 @@ function assertPublicBundleOptions(bo: mixed): PublicBundleOptions {
   invariant(bo.platform === undefined || typeof bo.platform === 'string', 'bundle options field `platform` must be a string');
   invariant(bo.runModule === undefined || typeof bo.runModule === 'boolean', 'bundle options field `runModule` must be a boolean');
   invariant(bo.sourceMapUrl === undefined || typeof bo.sourceMapUrl === 'string', 'bundle options field `sourceMapUrl` must be a boolean');
-  return {entryFile, ...bo};
+  return _extends({ entryFile }, bo);
 }
 
-exports.buildBundle = function(options: Options, bundleOptions: PublicBundleOptions) {
+exports.buildBundle = function (options, bundleOptions) {
   var server = createNonPersistentServer(options);
   const ServerClass = require('./Server');
-  return server.buildBundle({
-    ...ServerClass.DEFAULT_BUNDLE_OPTIONS,
-    ...assertPublicBundleOptions(bundleOptions),
-  }).then(p => {
+  return server.buildBundle(_extends({},
+  ServerClass.DEFAULT_BUNDLE_OPTIONS,
+  assertPublicBundleOptions(bundleOptions))).
+  then(p => {
     server.end();
     return p;
   });
 };
 
-exports.getOrderedDependencyPaths = function(options: Options, depOptions: {
-  +entryFile: string,
-  +dev: boolean,
-  +platform: string,
-  +minify: boolean,
-  +generateSourceMaps: boolean,
-}) {
+exports.getOrderedDependencyPaths = function (options, depOptions)
+
+
+
+
+
+{
   var server = createNonPersistentServer(options);
-  return server.getOrderedDependencyPaths(depOptions)
-    .then(function(paths) {
-      server.end();
-      return paths;
-    });
+  return server.getOrderedDependencyPaths(depOptions).
+  then(function (paths) {
+    server.end();
+    return paths;
+  });
 };
 
 function enableDebug() {
@@ -123,7 +123,7 @@ function enableDebug() {
   debug.enable(debugPattern);
 }
 
-function createServer(options: StrictOptions): Server {
+function createServer(options) {
   // the debug module is configured globally, we need to enable debugging
   // *before* requiring any packages that use `debug` for logging
   if (options.verbose) {
@@ -141,15 +141,15 @@ function createServer(options: StrictOptions): Server {
   return new ServerClass(serverOptions);
 }
 
-function createNonPersistentServer(options: Options): Server {
-  const serverOptions = {
+function createNonPersistentServer(options) {
+  const serverOptions = _extends({
     // It's unsound to set-up the reporter here,
     // but this allows backward compatibility.
-    reporter: options.reporter == null
-      ? require('./lib/reporting').nullReporter
-      : options.reporter,
-    ...options,
-    watch: !options.nonPersistent,
-  };
+    reporter: options.reporter == null ?
+    require('./lib/reporting').nullReporter :
+    options.reporter },
+  options, {
+    watch: !options.nonPersistent });
+
   return createServer(serverOptions);
 }

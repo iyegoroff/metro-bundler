@@ -6,40 +6,40 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
-const meta = require('../../shared/output/meta');
+const meta = require('../../shared/output/meta');var _require =
 
-const {createIndexMap} = require('./source-map');
-const {addModuleIdsToModuleWrapper, concat} = require('./util');
+require('./source-map');const createIndexMap = _require.createIndexMap;var _require2 =
+require('./util');const addModuleIdsToModuleWrapper = _require2.addModuleIdsToModuleWrapper,concat = _require2.concat;
 
-import type {OutputFn} from '../types.flow';
 
-function asPlainBundle({
-  filename,
-  idForPath,
-  modules,
-  requireCalls,
-  sourceMapPath,
-}) {
+
+function asPlainBundle(_ref)
+
+
+
+
+
+{let filename = _ref.filename,idForPath = _ref.idForPath,modules = _ref.modules,requireCalls = _ref.requireCalls,sourceMapPath = _ref.sourceMapPath;
   let code = '';
   let line = 0;
   const sections = [];
 
-  for (const module of concat(modules, requireCalls)) {
-    const {file} = module;
-    const moduleCode = file.type === 'module'
-      ? addModuleIdsToModuleWrapper(module, idForPath)
-      : file.code;
+  for (const module of concat(modules, requireCalls)) {const
+    file = module.file;
+    const moduleCode = file.type === 'module' ?
+    addModuleIdsToModuleWrapper(module, idForPath) :
+    file.code;
 
     code += moduleCode + '\n';
     if (file.map) {
       sections.push({
         map: file.map,
-        offset: {column: 0, line},
-      });
+        offset: { column: 0, line } });
+
     }
     line += countLines(moduleCode);
   }
@@ -51,14 +51,14 @@ function asPlainBundle({
   return {
     code,
     extraFiles: [[`${filename}.meta`, meta(code)]],
-    map: createIndexMap({file: filename, sections}),
-  };
+    map: createIndexMap({ file: filename, sections }) };
+
 }
 
-module.exports = (asPlainBundle: OutputFn<>);
+module.exports = asPlainBundle;
 
 const reLine = /^/gm;
-function countLines(string: string): number {
+function countLines(string) {
   //$FlowFixMe This regular expression always matches
   return string.match(reLine).length;
 }

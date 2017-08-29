@@ -12,12 +12,12 @@
 /* eslint-disable */
 
 /**
- * Creates an array from array like objects.
- *
- * https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.from
- */
+                      * Creates an array from array like objects.
+                      *
+                      * https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.from
+                      */
 if (!Array.from) {
-  Array.from = function(arrayLike /*, mapFn, thisArg */) {
+  Array.from = function (arrayLike /*, mapFn, thisArg */) {
     if (arrayLike == null) {
       throw new TypeError('Object is null or undefined');
     }
@@ -28,9 +28,9 @@ if (!Array.from) {
 
     var C = this;
     var items = Object(arrayLike);
-    var symbolIterator = typeof Symbol === 'function'
-      ? Symbol.iterator
-      : '@@iterator';
+    var symbolIterator = typeof Symbol === 'function' ?
+    Symbol.iterator :
+    '@@iterator';
     var mapping = typeof mapFn === 'function';
     var usingIterator = typeof items[symbolIterator] === 'function';
     var key = 0;
@@ -38,9 +38,9 @@ if (!Array.from) {
     var value;
 
     if (usingIterator) {
-      ret = typeof C === 'function'
-        ? new C()
-        : [];
+      ret = typeof C === 'function' ?
+      new C() :
+      [];
       var it = items[symbolIterator]();
       var next;
 
@@ -64,9 +64,9 @@ if (!Array.from) {
       len = 0;
     }
 
-    ret = typeof C === 'function'
-      ? new C(len)
-      : new Array(len);
+    ret = typeof C === 'function' ?
+    new C(len) :
+    new Array(len);
 
     while (key < len) {
       value = items[key];

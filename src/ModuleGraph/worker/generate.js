@@ -6,21 +6,21 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  */
 'use strict';
 
 const babelGenerate = require('babel-generator').default;
 
-function generate(ast: Object, filename: string, sourceCode: string) {
+function generate(ast, filename, sourceCode) {
   return babelGenerate(ast, {
     comments: false,
     compact: true,
     filename,
     sourceFileName: filename,
     sourceMaps: true,
-    sourceMapTarget: filename,
-  }, sourceCode);
+    sourceMapTarget: filename },
+  sourceCode);
 }
 
 module.exports = generate;

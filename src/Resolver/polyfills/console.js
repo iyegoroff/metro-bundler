@@ -13,10 +13,10 @@
 /* eslint-disable */
 
 /**
- * This pipes all of our console logging functions to native logging so that
- * JavaScript errors in required modules show up in Xcode via NSLog.
- */
-const inspect = (function() {
+                      * This pipes all of our console logging functions to native logging so that
+                      * JavaScript errors in required modules show up in Xcode via NSLog.
+                      */
+const inspect = function () {
   // Copyright Joyent, Inc. and other Node contributors.
   //
   // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43,8 +43,8 @@ const inspect = (function() {
   function inspect(obj, opts) {
     var ctx = {
       seen: [],
-      stylize: stylizeNoColor
-    };
+      stylize: stylizeNoColor };
+
     return formatValue(ctx, obj, opts.depth);
   }
 
@@ -55,7 +55,7 @@ const inspect = (function() {
   function arrayToHash(array) {
     var hash = {};
 
-    array.forEach(function(val, idx) {
+    array.forEach(function (val, idx) {
       hash[val] = true;
     });
 
@@ -76,8 +76,8 @@ const inspect = (function() {
 
     // IE doesn't make error fields non-enumerable
     // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-    if (isError(value)
-        && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    if (isError(value) && (
+    keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
       return formatError(value);
     }
 
@@ -98,7 +98,7 @@ const inspect = (function() {
       }
     }
 
-    var base = '', array = false, braces = ['{', '}'];
+    var base = '',array = false,braces = ['{', '}'];
 
     // Make Array say that they are Array
     if (isArray(value)) {
@@ -145,7 +145,7 @@ const inspect = (function() {
     if (array) {
       output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
     } else {
-      output = keys.map(function(key) {
+      output = keys.map(function (key) {
         return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
       });
     }
@@ -158,20 +158,20 @@ const inspect = (function() {
 
   function formatPrimitive(ctx, value) {
     if (isUndefined(value))
-      return ctx.stylize('undefined', 'undefined');
+    return ctx.stylize('undefined', 'undefined');
     if (isString(value)) {
-      var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                               .replace(/'/g, "\\'")
-                                               .replace(/\\"/g, '"') + '\'';
+      var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '').
+      replace(/'/g, "\\'").
+      replace(/\\"/g, '"') + '\'';
       return ctx.stylize(simple, 'string');
     }
     if (isNumber(value))
-      return ctx.stylize('' + value, 'number');
+    return ctx.stylize('' + value, 'number');
     if (isBoolean(value))
-      return ctx.stylize('' + value, 'boolean');
+    return ctx.stylize('' + value, 'boolean');
     // For some reason typeof null is "object", so special case here.
     if (isNull(value))
-      return ctx.stylize('null', 'null');
+    return ctx.stylize('null', 'null');
   }
 
 
@@ -185,15 +185,15 @@ const inspect = (function() {
     for (var i = 0, l = value.length; i < l; ++i) {
       if (hasOwnProperty(value, String(i))) {
         output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-            String(i), true));
+        String(i), true));
       } else {
         output.push('');
       }
     }
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       if (!key.match(/^\d+$/)) {
         output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-            key, true));
+        key, true));
       }
     });
     return output;
@@ -226,11 +226,11 @@ const inspect = (function() {
         }
         if (str.indexOf('\n') > -1) {
           if (array) {
-            str = str.split('\n').map(function(line) {
+            str = str.split('\n').map(function (line) {
               return '  ' + line;
             }).join('\n').substr(2);
           } else {
-            str = '\n' + str.split('\n').map(function(line) {
+            str = '\n' + str.split('\n').map(function (line) {
               return '   ' + line;
             }).join('\n');
           }
@@ -248,9 +248,9 @@ const inspect = (function() {
         name = name.substr(1, name.length - 2);
         name = ctx.stylize(name, 'name');
       } else {
-        name = name.replace(/'/g, "\\'")
-                   .replace(/\\"/g, '"')
-                   .replace(/(^"|"$)/g, "'");
+        name = name.replace(/'/g, "\\'").
+        replace(/\\"/g, '"').
+        replace(/(^"|"$)/g, "'");
         name = ctx.stylize(name, 'string');
       }
     }
@@ -261,19 +261,19 @@ const inspect = (function() {
 
   function reduceToSingleString(output, base, braces) {
     var numLinesEst = 0;
-    var length = output.reduce(function(prev, cur) {
+    var length = output.reduce(function (prev, cur) {
       numLinesEst++;
       if (cur.indexOf('\n') >= 0) numLinesEst++;
       return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
     }, 0);
 
     if (length > 60) {
-      return braces[0] +
-             (base === '' ? '' : base + '\n ') +
-             ' ' +
-             output.join(',\n  ') +
-             ' ' +
-             braces[1];
+      return braces[0] + (
+      base === '' ? '' : base + '\n ') +
+      ' ' +
+      output.join(',\n  ') +
+      ' ' +
+      braces[1];
     }
 
     return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
@@ -327,8 +327,8 @@ const inspect = (function() {
   }
 
   function isError(e) {
-    return isObject(e) &&
-        (objectToString(e) === '[object Error]' || e instanceof Error);
+    return isObject(e) && (
+    objectToString(e) === '[object Error]' || e instanceof Error);
   }
 
   function isFunction(arg) {
@@ -337,11 +337,11 @@ const inspect = (function() {
 
   function isPrimitive(arg) {
     return arg === null ||
-           typeof arg === 'boolean' ||
-           typeof arg === 'number' ||
-           typeof arg === 'string' ||
-           typeof arg === 'symbol' ||  // ES6 symbol
-           typeof arg === 'undefined';
+    typeof arg === 'boolean' ||
+    typeof arg === 'number' ||
+    typeof arg === 'string' ||
+    typeof arg === 'symbol' || // ES6 symbol
+    typeof arg === 'undefined';
   }
 
   function objectToString(o) {
@@ -353,7 +353,7 @@ const inspect = (function() {
   }
 
   return inspect;
-})();
+}();
 
 
 const OBJECT_COLUMN_NAME = '(index)';
@@ -361,8 +361,8 @@ const LOG_LEVELS = {
   trace: 0,
   info: 1,
   warn: 2,
-  error: 3
-};
+  error: 3 };
+
 const INSPECTOR_LEVELS = [];
 INSPECTOR_LEVELS[LOG_LEVELS.trace] = 'debug';
 INSPECTOR_LEVELS[LOG_LEVELS.info] = 'log';
@@ -375,13 +375,13 @@ const INSPECTOR_FRAMES_TO_SKIP = __DEV__ ? 2 : 1;
 
 if (global.nativeLoggingHook) {
   function getNativeLogFunction(level) {
-    return function() {
+    return function () {
       let str;
       if (arguments.length === 1 && typeof arguments[0] === 'string') {
         str = arguments[0];
       } else {
-        str = Array.prototype.map.call(arguments, function(arg) {
-          return inspect(arg, {depth: 10});
+        str = Array.prototype.map.call(arguments, function (arg) {
+          return inspect(arg, { depth: 10 });
         }).join(', ');
       }
 
@@ -394,17 +394,17 @@ if (global.nativeLoggingHook) {
       }
       if (global.__inspectorLog) {
         global.__inspectorLog(
-          INSPECTOR_LEVELS[logLevel],
-          str,
-          [].slice.call(arguments),
-          INSPECTOR_FRAMES_TO_SKIP);
+        INSPECTOR_LEVELS[logLevel],
+        str,
+        [].slice.call(arguments),
+        INSPECTOR_FRAMES_TO_SKIP);
       }
       global.nativeLoggingHook(str, logLevel);
     };
   }
 
   function repeat(element, n) {
-    return Array.apply(null, Array(n)).map(function() { return element; });
+    return Array.apply(null, Array(n)).map(function () {return element;});
   };
 
   function consoleTablePolyfill(rows) {
@@ -431,7 +431,7 @@ if (global.nativeLoggingHook) {
 
     // Convert each cell to a string. Also
     // figure out max cell width for each column
-    columns.forEach(function(k, i) {
+    columns.forEach(function (k, i) {
       columnWidths[i] = k.length;
       for (var j = 0; j < rows.length; j++) {
         var cellStr = (rows[j][k] || '?').toString();
@@ -444,7 +444,7 @@ if (global.nativeLoggingHook) {
     // Join all elements in the row into a single string with | separators
     // (appends extra spaces to each cell to make separators  | alligned)
     function joinRow(row, space) {
-      var cells = row.map(function(cell, i) {
+      var cells = row.map(function (cell, i) {
         var extraSpaces = repeat(' ', columnWidths[i] - cell.length).join('');
         return cell + extraSpaces;
       });
@@ -452,7 +452,7 @@ if (global.nativeLoggingHook) {
       return cells.join(space + '|' + space);
     };
 
-    var separators = columnWidths.map(function(columnWidth) {
+    var separators = columnWidths.map(function (columnWidth) {
       return repeat('-', columnWidth).join('');
     });
     var separatorRow = joinRow(separators, '-');
@@ -478,8 +478,8 @@ if (global.nativeLoggingHook) {
     warn: getNativeLogFunction(LOG_LEVELS.warn),
     trace: getNativeLogFunction(LOG_LEVELS.trace),
     debug: getNativeLogFunction(LOG_LEVELS.trace),
-    table: consoleTablePolyfill
-  };
+    table: consoleTablePolyfill };
+
 
   // If available, also call the original `console` method since that is
   // sometimes useful. Ex: on OS X, this will let you see rich output in
@@ -494,7 +494,7 @@ if (global.nativeLoggingHook) {
     Object.keys(console).forEach(methodName => {
       const reactNativeMethod = console[methodName];
       if (originalConsole[methodName]) {
-        console[methodName] = function() {
+        console[methodName] = function () {
           originalConsole[methodName](...arguments);
           reactNativeMethod.apply(console, arguments);
         };
@@ -510,6 +510,6 @@ if (global.nativeLoggingHook) {
     warn: consoleLoggingStub,
     trace: consoleLoggingStub,
     debug: consoleLoggingStub,
-    table: consoleLoggingStub
-  };
+    table: consoleLoggingStub };
+
 }

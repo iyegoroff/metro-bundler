@@ -16,7 +16,7 @@ function registerOnly(onlyList) {
   // This prevents `babel-register` from transforming the code of the
   // plugins/presets that we are require-ing themselves before setting up the
   // actual config.
-  require('babel-register')({only: [], babelrc: false});
+  require('babel-register')({ only: [], babelrc: false });
   require('babel-register')(config(onlyList));
 }
 
@@ -25,17 +25,17 @@ function config(onlyList) {
   return {
     presets: [require('babel-preset-es2015-node')],
     plugins: [
-      'transform-flow-strip-types',
-      'syntax-trailing-function-commas',
-      'transform-object-rest-spread',
-      'transform-async-to-generator',
-      'transform-class-properties',
-    ].map(pluginName => require(`babel-plugin-${pluginName}`)),
+    'transform-flow-strip-types',
+    'syntax-trailing-function-commas',
+    'transform-object-rest-spread',
+    'transform-async-to-generator',
+    'transform-class-properties'].
+    map(pluginName => require(`babel-plugin-${pluginName}`)),
     only: _only,
     retainLines: true,
     sourceMaps: 'inline',
-    babelrc: false,
-  };
+    babelrc: false };
+
 }
 
 module.exports = exports = registerOnly;

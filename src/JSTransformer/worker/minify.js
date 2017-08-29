@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  * @format
  */
 
@@ -14,43 +14,42 @@
 
 const uglify = require('uglify-js');
 
-import type {MappingsMap} from '../../lib/SourceMap';
-type ResultWithMap = {
-  code: string,
-  map: MappingsMap,
-};
+
+
+
+
+
 
 const UGLIFY_JS_OUTPUT_OPTIONS = {
   ascii_only: true,
-  screw_ie8: true,
-};
+  screw_ie8: true };
 
-function noSourceMap(code: string): string {
+
+function noSourceMap(code) {
   return minify(code).code;
 }
 
 function withSourceMap(
-  code: string,
-  sourceMap: ?MappingsMap,
-  filename: string,
-): ResultWithMap {
+code,
+sourceMap,
+filename)
+{
   const result = minify(code, sourceMap);
 
-  const map: MappingsMap = JSON.parse(result.map);
+  const map = JSON.parse(result.map);
   map.sources = [filename];
-  return {code: result.code, map};
+  return { code: result.code, map };
 }
 
-function minify(inputCode: string, inputMap: ?MappingsMap) {
+function minify(inputCode, inputMap) {
   return uglify.minify(inputCode, {
     fromString: true,
     inSourceMap: inputMap,
     outSourceMap: true,
-    output: UGLIFY_JS_OUTPUT_OPTIONS,
-  });
+    output: UGLIFY_JS_OUTPUT_OPTIONS });
+
 }
 
 module.exports = {
   noSourceMap,
-  withSourceMap,
-};
+  withSourceMap };

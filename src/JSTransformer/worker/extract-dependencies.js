@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @flow
+ * 
  * @format
  */
 
@@ -16,15 +16,15 @@ const babel = require('babel-core');
 const babylon = require('babylon');
 
 /**
- * Extracts dependencies (module IDs imported with the `require` function) from
- * a string containing code. This walks the full AST for correctness (versus
- * using, for example, regular expressions, that would be faster but inexact.)
- *
- * The result of the dependency extraction is an de-duplicated array of
- * dependencies, and an array of offsets to the string literals with module IDs.
- * The index points to the opening quote.
- */
-function extractDependencies(code: string) {
+                                     * Extracts dependencies (module IDs imported with the `require` function) from
+                                     * a string containing code. This walks the full AST for correctness (versus
+                                     * using, for example, regular expressions, that would be faster but inexact.)
+                                     *
+                                     * The result of the dependency extraction is an de-duplicated array of
+                                     * dependencies, and an array of offsets to the string literals with module IDs.
+                                     * The index points to the opening quote.
+                                     */
+function extractDependencies(code) {
   const ast = babylon.parse(code);
   const dependencies = new Set();
   const dependencyOffsets = [];
@@ -35,19 +35,19 @@ function extractDependencies(code: string) {
       const callee = node.callee;
       const arg = node.arguments[0];
       if (
-        callee.type !== 'Identifier' ||
-        callee.name !== 'require' ||
-        !arg ||
-        arg.type !== 'StringLiteral'
-      ) {
+      callee.type !== 'Identifier' ||
+      callee.name !== 'require' ||
+      !arg ||
+      arg.type !== 'StringLiteral')
+      {
         return;
       }
       dependencyOffsets.push(arg.start);
       dependencies.add(arg.value);
-    },
-  });
+    } });
 
-  return {dependencyOffsets, dependencies: Array.from(dependencies)};
+
+  return { dependencyOffsets, dependencies: Array.from(dependencies) };
 }
 
 module.exports = extractDependencies;
