@@ -12,8 +12,6 @@
 
 'use strict';
 
-const TempDirs = require('./TempDirs');
-
 const crypto = require('crypto');
 const debugRead = require('debug')('Metro:TransformCache:Read');
 const fs = require('fs');
@@ -92,7 +90,7 @@ class FileBasedCache {
   /**
    * The root path is where the data will be stored. It shouldn't contain
    * other files other than the cache's own files, so it should start empty
-   * when the packager is first run. When doing a cache reset, it may be
+   * when Metro Bundler is first run. When doing a cache reset, it may be
    * completely deleted.
    */
   constructor(rootPath: string) {
@@ -139,7 +137,10 @@ class FileBasedCache {
     writeFileAtomicSync(
       cacheFilePath.metadata,
       JSON.stringify([
-        crypto.createHash('sha1').update(result.code).digest('hex'),
+        crypto
+          .createHash('sha1')
+          .update(result.code)
+          .digest('hex'),
         hashSourceCode(props),
         result.dependencies,
         result.dependencyOffsets,
@@ -153,6 +154,14 @@ class FileBasedCache {
     const msg = result ? 'Cache hit: ' : 'Cache miss: ';
     debugRead(msg + props.filePath);
     return result;
+  }
+
+  resetCache(reporter: Reporter) {
+    rimraf.sync(path.join(this._rootPath, 'last_collected'));
+    rimraf.sync(path.join(this._rootPath, 'cache'));
+    reporter.update({type: 'transform_cache_reset'});
+    this._cacheWasReset = true;
+    this._lastCollected = Date.now();
   }
 
   /**
@@ -219,7 +228,7 @@ class FileBasedCache {
    */
   _collectIfNecessarySync(options: CacheOptions) {
     if (options.resetCache && !this._cacheWasReset) {
-      this._resetCache(options.reporter);
+      this.resetCache(options.reporter);
       return;
     }
     const lastCollected = this._lastCollected;
@@ -229,14 +238,6 @@ class FileBasedCache {
     ) {
       this._collectSyncNoThrow(options.reporter);
     }
-  }
-
-  _resetCache(reporter: Reporter) {
-    rimraf.sync(path.join(this._rootPath, 'last_collected'));
-    rimraf.sync(path.join(this._rootPath, 'cache'));
-    reporter.update({type: 'transform_cache_reset'});
-    this._cacheWasReset = true;
-    this._lastCollected = Date.now();
   }
 
   /**
@@ -261,7 +262,7 @@ class FileBasedCache {
   }
 
   /**
-   * When restarting packager we want to avoid running the collection over
+   * When restarting Metro Bundler we want to avoid running the collection over
    * again, so we store the last collection time in a file and we check that
    * first.
    */
@@ -274,7 +275,7 @@ class FileBasedCache {
     );
     if (
       Number.isInteger(lastCollected) &&
-      Date.now() - lastCollected > GARBAGE_COLLECTION_PERIOD
+      Date.now() - lastCollected < GARBAGE_COLLECTION_PERIOD
     ) {
       return;
     }
@@ -352,10 +353,14 @@ function readMetadataFileSync(
   if (
     typeof cachedResultHash !== 'string' ||
     typeof cachedSourceHash !== 'string' ||
-    !(Array.isArray(dependencies) &&
-      dependencies.every(dep => typeof dep === 'string')) ||
-    !(Array.isArray(dependencyOffsets) &&
-      dependencyOffsets.every(offset => typeof offset === 'number')) ||
+    !(
+      Array.isArray(dependencies) &&
+      dependencies.every(dep => typeof dep === 'string')
+    ) ||
+    !(
+      Array.isArray(dependencyOffsets) &&
+      dependencyOffsets.every(offset => typeof offset === 'number')
+    ) ||
     !(sourceMap == null || typeof sourceMap === 'object')
   ) {
     return null;
@@ -424,9 +429,9 @@ function none(): TransformCache {
 }
 
 /**
- * If packager is running for two different directories, we don't want the
+ * If Metro Bundler is running for two different directories, we don't want the
  * caches to conflict with each other. `__dirname` carries that because
- * packager will be, for example, installed in a different `node_modules/`
+ * Metro Bundler will be, for example, installed in a different `node_modules/`
  * folder for different projects.
  */
 function useTempDir(): TransformCache {
@@ -434,71 +439,11 @@ function useTempDir(): TransformCache {
   if (process.getuid != null) {
     hash.update(process.getuid().toString());
   }
-  const tmpDir = require('os').tmpdir();
-  const cacheName = 'react-native-packager-cache';
+  const tmpDir = tmpdir();
+  const cacheName = 'metro-bundler-cache';
   const rootPath = path.join(tmpDir, cacheName + '-' + hash.digest('hex'));
   mkdirp.sync(rootPath);
   return new FileBasedCache(rootPath);
-}
-
-/**
- * Keep track of the path used for the cache in a local file so that a fresh
- * clone gets a fresh cache, and so that the temp dir used cannot be predicted.
- * Sometimes a different user build the same project, in which case we use a
- * different subfolder of the temp directory.
- *
- * If the directory specified in the `.metro-bundler` doesn't exist anymore
- * (ex. after a machine reboot and `/tmp` has been cleaned), we just create
- * a new one.
- */
-function useProjectDir(projectPath: string): TransformCache {
-  invariant(path.isAbsolute(projectPath), 'project path must be absolute');
-  const metaFilePath = path.resolve(projectPath, '.metro-bundler');
-  const metaDirPath = readMetaDirPath(metaFilePath);
-  if (metaDirPath != null) {
-    try {
-      return useMetaDirPath(metaDirPath);
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error;
-      }
-    }
-  }
-  return useMetaDirPath(createMetaDir(metaFilePath));
-}
-
-/**
- * Use the specified path as cache, by creating a subdirectory specific to the
- * current user ID. This could fail if `metaDirPath` doesn't exist.
- */
-function useMetaDirPath(metaDirPath: string): TransformCache {
-  const uidStr = process.getuid != null ? process.getuid().toString() : 'g';
-  const finalPath = path.join(metaDirPath, '_' + uidStr);
-  TempDirs.tryMkdirSync(finalPath, 0o700);
-  return new FileBasedCache(finalPath);
-}
-
-/**
- * Return the path of the cache directory, if it's already been set for that
- * project, in the shape of a `.metro-bundler` file.
- */
-function readMetaDirPath(metaFilePath: string): ?string {
-  const metaFile = tryReadFileSync(metaFilePath);
-  if (metaFile == null) {
-    return null;
-  }
-  return metaFile.split('\n')[0];
-}
-
-/**
- * Create a new top-level directory to be used for the cache. We give all
- * permissions because different users might share that directory.
- */
-function createMetaDir(metaFilePath: string): string {
-  const tmpDirPath = tmpdir();
-  const metaDirPath = TempDirs.create(path.join(tmpDirPath, 'mb-'), 0o777);
-  fs.writeFileSync(metaFilePath, metaDirPath + '\n');
-  return metaDirPath;
 }
 
 function tmpdir(): string {
@@ -521,4 +466,4 @@ function tryReadFileSync(filePath): ?string {
   }
 }
 
-module.exports = {FileBasedCache, none, useTempDir, useProjectDir};
+module.exports = {FileBasedCache, none, useTempDir};

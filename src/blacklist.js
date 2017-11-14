@@ -5,6 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @format
  */
 'use strict';
 
@@ -13,12 +15,14 @@ var path = require('path');
 // Don't forget to everything listed here to `package.json`
 // modulePathIgnorePatterns.
 var sharedBlacklist = [
-/node_modules[/\\]react[/\\]dist[/\\].*/,
+  /node_modules[/\\]react[/\\]dist[/\\].*/,
 
-/website\/node_modules\/.*/,
+  /website\/node_modules\/.*/,
 
-/heapCapture\/bundle\.js/];
+  /heapCapture\/bundle\.js/,
 
+  /.*\/__tests__\/.*/,
+];
 
 function escapeRegExp(pattern) {
   if (Object.prototype.toString.call(pattern) === '[object RegExp]') {
@@ -28,17 +32,19 @@ function escapeRegExp(pattern) {
     // convert the '/' into an escaped local file separator
     return escaped.replace(/\//g, '\\' + path.sep);
   } else {
-    throw new Error('Unexpected packager blacklist pattern: ' + pattern);
+    throw new Error('Unexpected blacklist pattern: ' + pattern);
   }
 }
 
 function blacklist(additionalBlacklist) {
-  return new RegExp('(' +
-  (additionalBlacklist || []).concat(sharedBlacklist).
-  map(escapeRegExp).
-  join('|') +
-  ')$');
-
+  return new RegExp(
+    '(' +
+      (additionalBlacklist || [])
+        .concat(sharedBlacklist)
+        .map(escapeRegExp)
+        .join('|') +
+      ')$',
+  );
 }
 
 module.exports = blacklist;

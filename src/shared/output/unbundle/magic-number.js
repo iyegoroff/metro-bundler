@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * 
+ * @format
  */
+
 'use strict';
 
-module.exports = 0xFB0BD1E5;
+module.exports = require('./fs');

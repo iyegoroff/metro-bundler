@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright (c) 2015-present, Facebook, Inc.
  * All rights reserved.
  *
@@ -7,6 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @flow
+ * @format
  */
 
 'use strict';
@@ -14,7 +15,6 @@
 const NO_OPTIONS = {};
 
 class ResolutionResponse<TModule: {hash(): string}, TOptions> {
-
   dependencies: Array<TModule>;
   mainModuleId: ?(number | string);
   mocks: mixed;
@@ -34,6 +34,9 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     this.mocks = null;
     this.numPrependedDependencies = 0;
     this.options = options;
+    /* $FlowFixMe(>=0.56.0 site=react_native_fb) This comment suppresses an
+     * error found when Flow v0.56 was deployed. To see the error delete this
+     * comment and run Flow. */
     this._mappings = Object.create(null);
     this._finalized = false;
   }
@@ -49,20 +52,16 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
       mocks = this.mocks,
     } = properties;
 
-    const numPrependedDependencies = dependencies === this.dependencies
-      ? this.numPrependedDependencies : 0;
+    const numPrependedDependencies =
+      dependencies === this.dependencies ? this.numPrependedDependencies : 0;
 
     /* $FlowFixMe: Flow doesn't like Object.assign on class-made objects. */
-    return Object.assign(
-      new this.constructor(this.options),
-      this,
-      {
-        dependencies,
-        mainModuleId,
-        mocks,
-        numPrependedDependencies,
-      },
-    );
+    return Object.assign(new this.constructor(this.options), this, {
+      dependencies,
+      mainModuleId,
+      mocks,
+      numPrependedDependencies,
+    });
   }
 
   _assertNotFinalized() {
@@ -78,9 +77,9 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
   }
 
   finalize(): Promise<this> {
-    /* $FlowFixMe: _mainModule is not initialized in the constructor. */
-    return this._mainModule.getName().then(id => {
-      this.mainModuleId = id;
+    return Promise.resolve().then(() => {
+      /* $FlowFixMe: _mainModule is not initialized in the constructor. */
+      this.mainModuleId = this._mainModule.getName();
       this._finalized = true;
       return this;
     });
@@ -119,9 +118,11 @@ class ResolutionResponse<TModule: {hash(): string}, TOptions> {
     this.mocks = mocks;
   }
 
-  getResolvedDependencyPairs(module: TModule): $ReadOnlyArray<[string, TModule]> {
+  getResolvedDependencyPairs(
+    module: TModule,
+  ): $ReadOnlyArray<[string, TModule]> {
     this._assertFinalized();
-    return this._mappings[module.hash()];
+    return this._mappings[module.hash()] || [];
   }
 }
 

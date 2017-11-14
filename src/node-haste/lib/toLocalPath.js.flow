@@ -7,27 +7,31 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @flow
+ * @format
  */
 
 'use strict';
 
-const {relative} = require('path');
+const {relative, basename} = require('path');
 
 declare class OpaqueLocalPath {}
 export type LocalPath = OpaqueLocalPath & string;
 
 // FIXME: This function has the shortcoming of potentially returning identical
 // paths for two files in different roots.
-function toLocalPath(roots: $ReadOnlyArray<string>, absolutePath: string): LocalPath {
+function toLocalPath(
+  roots: $ReadOnlyArray<string>,
+  absolutePath: string,
+): LocalPath {
   for (let i = 0; i < roots.length; i++) {
     const localPath = relative(roots[i], absolutePath);
-    if (localPath[0] !== '.') {
+    if (localPath[0] !== '.' || basename(absolutePath) == localPath) {
       return (localPath: any);
     }
   }
 
   throw new Error(
-    'Expected root module to be relative to one of the project roots'
+    `Expected path \`${absolutePath}\` to be relative to one of the project roots`,
   );
 }
 
